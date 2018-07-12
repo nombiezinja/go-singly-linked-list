@@ -485,3 +485,26 @@ func TestFind(t *testing.T) {
 		t.Error("Expected ", n2, ", got ", v)
 	}
 }
+
+func TestFindByKey(t *testing.T) {
+	s := New()
+
+	v := s.FindByKey(0.1)
+	if v != nil {
+		t.Error("Expected nil, got ", v)
+	}
+
+	n1 := &Node{Key: 0.1}
+	s.Append(n1)
+	v = s.FindByKey(0.1)
+	if v != n1 {
+		t.Error("Expected ", n1, ", got ", v)
+	}
+
+	n2 := &Node{Key: 0.3}
+	s.Append(n2)
+	v = s.Find(0.3)
+	if v != n2 {
+		t.Error("Expected ", n2, ", got ", v)
+	}
+}

@@ -199,6 +199,16 @@ func (s *List) Find(value interface{}) *Node {
 	return currentNode
 }
 
+// Find returns the node with matching key or nil if not found
+func (s *List) FindByKey(key float64) *Node {
+	currentNode := s.front
+	for currentNode != nil && currentNode.Key != key && currentNode.next != nil {
+		currentNode = currentNode.next
+	}
+
+	return currentNode
+}
+
 // Length returns the amount of nodes in list s
 func (s *List) Length() int {
 	return s.length
