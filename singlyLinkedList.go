@@ -1,8 +1,6 @@
 // Package List implements a singly linked list
 package go_singly_linked_list
 
-import "fmt"
-
 // List is a singly linked list implementation
 type List struct {
 	front *Node
@@ -106,8 +104,6 @@ func (s *List) InsertInAscendingOrder(key float64, value interface{}, valueAlter
 	currentNode := s.front
 	toInsert := &Node{Key: key, Value: value}
 	if currentNode == nil {
-		fmt.Println("s.front nil")
-
 		s.front = toInsert
 	} else {
 		for currentNode.Key < key {
@@ -116,11 +112,9 @@ func (s *List) InsertInAscendingOrder(key float64, value interface{}, valueAlter
 			// if key already exists in list, alter the value with anonymous function passed as argument
 		}
 		if currentNode.Key == key {
-			fmt.Println("else if running")
 			currentNode.Value = valueAlterer(currentNode.Value, value)
 		} else {
 			// if node at current iteration is bigger than key, insert before this node
-			fmt.Println("else running")
 			s.InsertBefore(toInsert, currentNode)
 		}
 	}
