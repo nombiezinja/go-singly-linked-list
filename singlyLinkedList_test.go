@@ -1,6 +1,7 @@
 package go_singly_linked_list
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -107,7 +108,11 @@ func TestPrepend(t *testing.T) {
 }
 
 var appendToSlice ValueAlterer = func(slice interface{}, value interface{}) interface{} {
-	slice = append(slice.([]string), value.(string))
+	assertedSlice, ok := slice.([]string)
+	if !ok {
+		assertedSlice = []string{}
+	}
+	slice = append(assertedSlice, value.(string))
 	return slice
 }
 
@@ -116,42 +121,47 @@ func TestInsertInAscendingOrder(t *testing.T) {
 	n1 := &Node{Key: 1}
 	n2 := &Node{Key: 2}
 	n5 := &Node{Key: 5}
-	n4 := &Node{Key: 4, Value: []string{"hello"}, next: n5}
-	n3 := &Node{Key: 3, Value: "hello", next: n4}
-
+	n4 := &Node{Key: 4, Value: []string{"hello"}}
+	n4ExpectedValue := []string{"hello", "world"}
 	s.Append(n1)
 	s.Append(n2)
 	s.Append(n4)
 	s.Append(n5)
 
 	s.InsertInAscendingOrder(3, "hello", appendToSlice)
-	if s.Length() != 5 {
-		t.Error("Expected length 5, got ", s.Length())
-	}
-	if !reflect.DeepEqual(s.front.next, n2) {
-		t.Error("Expected ", n2, ", got ", s.front.next)
-	}
-	if !reflect.DeepEqual(s.front.next.next, n3) {
-		t.Error("Expected ", n3, ", got ", s.front.next.next)
-	}
-	if !reflect.DeepEqual(s.front.next.next.next, n4) {
-		t.Error("Expected ", n4, ", got ", s.front.next.next.next)
-	}
-
-	n4after := &Node{Key: 4, Value: []string{"hello", "world"}, next: n5}
-
 	s.InsertInAscendingOrder(4, "world", appendToSlice)
-	if s.Length() != 5 {
-		t.Error("Expected length 5, got ", s.Length())
+	s.InsertInAscendingOrder(8, "hello", appendToSlice)
+
+	fmt.Println("1", s.Front())
+	fmt.Println("2", s.Front().Next())
+	fmt.Println("3", s.Front().Next().Next())
+	fmt.Println("4", s.Front().Next().Next().Next())
+	fmt.Println("5", s.Front().Next().Next().Next().Next())
+	fmt.Println("6", s.Front().Next().Next().Next().Next().Next())
+
+	if s.Length() != 6 {
+		t.Errorf("Expected length to be 6, but instead got %v", s.Length())
 	}
-	if !reflect.DeepEqual(s.front.next, n2) {
-		t.Error("Expected ", n2, ", got ", s.front.next)
+	if s.Front().Key != 1 {
+		t.Errorf("Expected node at position 1 to have Key 1, but instead got %v", s.Front())
 	}
-	if !reflect.DeepEqual(s.front.next.next, n3) {
-		t.Error("Expected ", n3, ", got ", s.front.next.next)
+	if s.Front().Next().Key != 2 {
+		t.Errorf("Expected node at position 2 to have Key 2, but instead got %v", s.Front().Next().Key)
 	}
-	if !reflect.DeepEqual(s.front.next.next.next, n4after) {
-		t.Error("Expected ", n4after, ", got ", s.front.next.next.next)
+	if s.Front().Next().Next().Key != 3 {
+		t.Errorf("Expected node at position 3 to have Key 3, but instead got %v", s.Front().Next().Next().Key)
+	}
+	if !reflect.DeepEqual(s.Front().Next().Next().Value, []string{"hello"}) {
+		t.Errorf("Expected node at position 3 to have value hello, but instead got %v", s.Front().Next().Next().Value)
+	}
+	if !reflect.DeepEqual(s.Front().Next().Next().Next().Value, n4ExpectedValue) {
+		t.Errorf("Expected node at position 4 to have value hello world, but instead got %v", s.Front().Next().Next().Next().Value)
+	}
+	if s.Front().Next().Next().Next().Next().Key != 5 {
+		t.Errorf("Expected node at position 5 to have Key 5, but instead got %v", s.Front().Next().Next().Next().Next().Key)
+	}
+	if s.Front().Next().Next().Next().Next().Next().Key != 8 {
+		t.Errorf("Expected node at position 6 to have Key 8, but instead got %v", s.Front().Next().Next().Next().Next().Next().Key)
 	}
 }
 func TestInsertBefore(t *testing.T) {

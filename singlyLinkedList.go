@@ -102,20 +102,30 @@ type ValueAlterer func(toAlter interface{}, alterWith interface{}) interface{}
 // float64 keys, then returns the node
 func (s *List) InsertInAscendingOrder(key float64, value interface{}, valueAlterer ValueAlterer) {
 	currentNode := s.front
-	toInsert := &Node{Key: key, Value: value}
+	toInsert := &Node{Key: key}
 	if currentNode == nil {
-		s.front = toInsert
+		s.Append(toInsert)
+		s.front.Value = valueAlterer(s.front.Value, value)
 	} else {
-		for currentNode.Key < key {
-			// If node at current iteration is smaller than key, move on
-			currentNode = currentNode.next
-			// if key already exists in list, alter the value with anonymous function passed as argument
-		}
 		if currentNode.Key == key {
 			currentNode.Value = valueAlterer(currentNode.Value, value)
-		} else {
-			// if node at current iteration is bigger than key, insert before this node
-			s.InsertBefore(toInsert, currentNode)
+		}
+		for currentNode.Key < key {
+			// If node at current iteration is smaller than key, move on
+			prevNode := currentNode
+			currentNode = currentNode.next
+			if currentNode.next == nil {
+				s.Append(toInsert)
+				currentNode.next.Value = valueAlterer(currentNode.next.Value, value)
+				return
+			} else if currentNode.Key == key {
+				// if key already exists in list, alter the value with anonymous function passed as argument
+				currentNode.Value = valueAlterer(currentNode.Value, value)
+			} else if currentNode.Key > key {
+				// if node at current iteration is bigger than key, insert before this node
+				s.InsertBefore(toInsert, currentNode)
+				prevNode.next.Value = valueAlterer(prevNode.next.Value, value)
+			}
 		}
 	}
 }
